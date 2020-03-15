@@ -2,7 +2,7 @@
 <meta charset="utf-8">
 
 <script
-  src="https://code.jquery.com/jquery-3.4.1.min.js"
+  src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"
   integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
   crossorigin="anonymous"></script>
 <script
@@ -13,6 +13,8 @@
   href="https://cdn.jsdelivr.net/npm/@yaireo/tagify@3.6.2/dist/tagify.css"
   integrity="sha256-D4sj7s9Zj8YOMK3ZZvWUHiOlpZjor2835krg+X3f5HU="
   crossorigin="anonymous">
+<link rel="stylesheet"
+  href="/static/css/style.css">
 
 <title>Rindo</title>
 
@@ -24,8 +26,10 @@
 <p>
   <input id="id_tags" name="tags" form="post_form" value="{% if post %}{{ post.tags_json() }}{% endif %}">
 
-<p>
+<div class="split55">
   <textarea id="id_body" name="body" form="post_form">{% if post %}{{ post.body }}{% endif %}</textarea>
+  <iframe id="preview_container"></iframe>
+</div>
 
 <p>
   <button type="submit" form="post_form">Submit</button>
@@ -33,4 +37,7 @@
 <script>
   var tags = $('#id_tags');
   new Tagify(tags[0]);
+
+  var previewContainer = $('#preview_container')[0];
+  previewContainer.src = '/admin/post/preview/{{ post.uid }}';
 </script>

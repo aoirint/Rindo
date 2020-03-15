@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"
+  integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+  crossorigin="anonymous"></script>
+
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"
+  integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k="
+  crossorigin="anonymous"></script>
+
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/atom-one-dark.min.css"
+  integrity="sha256-GA29iW/iYj9FcuQQktvW45pRzHvZeFfgeFvA4tGVjpM="
+  crossorigin="anonymous">
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js"
+  integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ="
+  crossorigin="anonymous"></script>
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.7.0/highlightjs-line-numbers.min.js"
+  integrity="sha256-3f4oLge37B7QacI/ksfIIW3bPxh5xOli03/VKtvRWgU="
+  crossorigin="anonymous"></script>
+<script>
+  hljs.initHighlightingOnLoad();
+  hljs.initLineNumbersOnLoad();
+</script>
+
+<link rel="stylesheet"
+  href="/static/css/style.css">
+
+<title>Preview</title>
+
+{{ post.body_html() |safe }}

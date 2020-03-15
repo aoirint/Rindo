@@ -4,11 +4,16 @@ from datetime import datetime as dt
 
 from sqlalchemy import *
 from sqlalchemy.ext.declarative import declarative_base
+import markdown
 
 from common import *
 from database import *
 
 BaseModel = declarative_base()
+
+class PostStatus:
+    DRAFT = 0
+    PUBLISHED = 1
 
 class Post(BaseModel):
     __tablename__ = 'posts'
@@ -17,6 +22,7 @@ class Post(BaseModel):
     uid = Column(Text) # unique id
     title = Column(Text)
     body = Column(Text)
+    status = Column(Integer, default=PostStatus.DRAFT)
     created_at = Column(DateTime, default=dt.utcnow)
     updated_at = Column(DateTime, default=dt.utcnow)
 
@@ -24,6 +30,21 @@ class Post(BaseModel):
 
     def tags_json(self):
         return json.dumps([ tag.name for tag in self.tags ], ensure_ascii=False)
+
+    def body_html(self):
+        extensions = []
+        extensions += [ 'fenced_code', ] # https://python-markdown.github.io/extensions/fenced_code_blocks/
+        extensions += [ 'tables', ] # https://python-markdown.github.io/extensions/tables/
+        extensions += [ 'footnotes', ] # https://python-markdown.github.io/extensions/footnotes/
+
+        body = self.body
+
+        # Escape for MathJax
+        body = body.replace('\\[', '\\\\[').replace('\\]', '\\\\]').replace('\\(', '\\\\(').replace('\\)', '\\\\)')
+        body = markdown.markdown(body, extensions=extensions)
+
+        return body
+
 
 class Tag(BaseModel):
     __tablename__ = 'tags'

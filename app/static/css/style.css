@@ -1,0 +1,28 @@
+@charset "utf-8";
+
+.split55 {
+  display: flex;
+  width: 100%;
+}
+.split55 > * {
+  display: block;
+  flex-grow: 1;
+  margin: .5em;
+}
+
+#id_body {
+  padding: .5em;
+  width: 100%;
+}
+#preview_container {
+  border: 1px solid gray;
+  width: 100%;
+}
+
+html, body {
+  background-color: #FAFAFA;
+}
+
+.hljs-ln-numbers {
+  padding-right: .75em !important;
+}
