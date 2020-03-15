@@ -1,4 +1,5 @@
 import os
+import json
 from datetime import datetime as dt
 
 from sqlalchemy import *
@@ -21,8 +22,8 @@ class Post(BaseModel):
 
     tags = relationship('Tag', secondary='posttagrelations', back_populates='posts')
 
-    def tags_comma(self):
-        return [ tag.name for tag in self.tags ]
+    def tags_json(self):
+        return json.dumps([ tag.name for tag in self.tags ], ensure_ascii=False)
 
 class Tag(BaseModel):
     __tablename__ = 'tags'
@@ -73,7 +74,7 @@ class PostUpdater:
         self._set_tags(session, post, tagnames)
 
         session.add(post)
-        return session
+        return session, post
 
     def update(self, post_uid, title, body, tagnames):
         session = Session()
@@ -87,4 +88,4 @@ class PostUpdater:
         self._set_tags(session, post, tagnames)
 
         session.add(post)
-        return session
+        return session, post

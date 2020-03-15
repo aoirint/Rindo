@@ -22,7 +22,7 @@
   <input id="id_title" name="title" form="post_form" value="{% if post %}{{ post.title }}{% endif %}">
 
 <p>
-  <input id="id_tags" name="tags" form="post_form" value="{% if post %}{{ post.tags_comma }}{% endif %}">
+  <input id="id_tags" name="tags" form="post_form" value="{% if post %}{{ post.tags_json() }}{% endif %}">
 
 <p>
   <textarea id="id_body" name="body" form="post_form">{% if post %}{{ post.body }}{% endif %}</textarea>
