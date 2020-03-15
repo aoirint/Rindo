@@ -1,4 +1,5 @@
 import os
+import json
 from sqlalchemy import *
 from sqlalchemy.orm import *
 from flask import Flask, render_template, request, redirect, url_for
@@ -12,19 +13,28 @@ app = Flask(__name__)
 def index():
     return render_template('index.html')
 
+def create_or_update_post(post_uid=None):
+    title = request.form['title']
+    body = request.form['body']
+    tags = json.loads(request.form['tags'])
+    tagnames = [ tag['value'] for tag in tags ]
+
+    updater = PostUpdater()
+    if post_uid is None:
+        session, post = updater.create(title=title, body=body, tagnames=tagnames)
+    else:
+        session, post = updater.update(post_uid=post_uid, title=title, body=body, tagnames=tagnames)
+
+    session.commit()
+
+    return post
+
 @app.route('/admin/post/new', methods=[ 'GET', 'POST' ])
 def admin_post_new():
     if request.method == 'POST':
-        title = request.form['title']
-        body = request.form['body']
-        tagnames = request.form['tags']
-
-        updater = PostUpdater()
-        session, post = updater.create(title="title", body="body", tagnames=[ "a", "b", "c" ])
-        session.commit()
+        post = create_or_update_post()
 
         return redirect(url_for('admin_post_edit', post_uid=post.uid))
-
     else:
         post = None
 
@@ -32,8 +42,11 @@ def admin_post_new():
 
 @app.route('/admin/post/<post_uid>', methods=[ 'GET', 'POST' ])
 def admin_post_edit(post_uid):
-    session = Session()
-    post = session.query(Post).filter(Post.uid == post_uid).first()
+    if request.method == 'POST':
+        post = create_or_update_post(post_uid=post_uid)
+    else:
+        session = Session()
+        post = session.query(Post).filter(Post.uid == post_uid).first()
 
     return render_template('admin/post.html', post=post)
 

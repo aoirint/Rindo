@@ -19,7 +19,7 @@
 <form id="post_form" method="POST" enctype="multipart/form-data"></form>
 
 <p>
-  <input id="id_title" name="title" form="post_form" value="{% if post %}{{ post.title }}{% endif %}">
+  <input id="id_title" name="title" form="post_form" value="{% if post %}{{ post.title }}{% endif %}" required>
 
 <p>
   <input id="id_tags" name="tags" form="post_form" value="{% if post %}{{ post.tags_json() }}{% endif %}">
