@@ -1,19 +1,21 @@
 import os
 import json
 from datetime import datetime as dt
-
 from sqlalchemy import *
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import *
+
 import markdown
 
-from common import *
-from database import *
+from settings import BaseModel, Session
 
-BaseModel = declarative_base()
+def generate_unique_id(length=14):
+    return os.urandom(length).hex()
+
 
 class PostStatus:
-    DRAFT = 0
-    PUBLISHED = 1
+    UNSAVED_DRAFT = 0
+    DRAFT = 1
+    PUBLISHED = 2
 
 class Post(BaseModel):
     __tablename__ = 'posts'
@@ -22,16 +24,42 @@ class Post(BaseModel):
     uid = Column(Text) # unique id
     title = Column(Text)
     body = Column(Text)
-    status = Column(Integer, default=PostStatus.DRAFT)
+    status = Column(Integer, default=PostStatus.UNSAVED_DRAFT)
     created_at = Column(DateTime, default=dt.utcnow)
     updated_at = Column(DateTime, default=dt.utcnow)
+    posted_at = Column(DateTime)
+    modified_at = Column(DateTime)
 
     tags = relationship('Tag', secondary='posttagrelations', back_populates='posts')
+
+    @staticmethod
+    def create_new_draft():
+        post_uid = generate_unique_id()
+        post = Post()
+        post.uid = post_uid
+
+        return post
+
+    def set_tags(self, tagify_string):
+        tagify_tags = json.loads(tagify_string)
+
+        tags = []
+        for tagify_tag in tagify_tags:
+            name = tagify_tag['value']
+            tag = Tag.query.filter(Tag.name == name).first()
+            if tag is None:
+                tag = Tag(name=name)
+            tags.append(tag)
+
+        self.tags = tags
 
     def tags_json(self):
         return json.dumps([ tag.name for tag in self.tags ], ensure_ascii=False)
 
     def body_html(self):
+        if self.body is None:
+            return ''
+
         extensions = []
         extensions += [ 'fenced_code', ] # https://python-markdown.github.io/extensions/fenced_code_blocks/
         extensions += [ 'tables', ] # https://python-markdown.github.io/extensions/tables/
@@ -66,47 +94,3 @@ class PostTagRelation(BaseModel):
 
     created_at = Column(DateTime, default=dt.utcnow)
     updated_at = Column(DateTime, default=dt.utcnow)
-
-class PostUpdater:
-    def __init__(self):
-        pass
-
-    def _set_tags(self, session, post, tagnames):
-        tags = []
-        for tagname in tagnames:
-            tag = session.query(Tag).filter(Tag.name == tagname).first()
-            if tag is None:
-                tag = Tag(name=tagname)
-                session.add(tag)
-            tags.append(tag)
-
-        post.tags = tags
-
-    def create(self, title, body, tagnames):
-        session = Session()
-
-        post_uid = generate_unique_id()
-        post = Post()
-
-        post.uid = post_uid
-        post.title = title
-        post.body = body
-
-        self._set_tags(session, post, tagnames)
-
-        session.add(post)
-        return session, post
-
-    def update(self, post_uid, title, body, tagnames):
-        session = Session()
-
-        post = session.query(Post).filter(Post.uid == post_uid).first()
-
-        post.uid = post_uid
-        post.title = title
-        post.body = body
-
-        self._set_tags(session, post, tagnames)
-
-        session.add(post)
-        return session, post
