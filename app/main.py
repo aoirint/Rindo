@@ -1,5 +1,6 @@
 import os
 import json
+from datetime import datetime as dt
 from sqlalchemy import *
 from sqlalchemy.orm import *
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory, jsonify
@@ -13,6 +14,14 @@ app = Flask(__name__)
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/post/<post_uid>')
+def post(post_uid):
+    post = Post.query.filter(and_(Post.uid == post_uid, Post.status == PostStatus.PUBLISHED)).first()
+    if post is None:
+        return render_template('404.html'), 404
+
+    return render_template('post.html', post=post)
 
 @app.route('/admin/post/new')
 def admin_post_new():
@@ -34,7 +43,16 @@ def admin_post_edit(post_uid):
         post.title = request.form['title']
         post.body = request.form['body']
         post.set_tags(request.form['tags'])
-        post.status = PostStatus.DRAFT
+
+        status = int(request.form['status'])
+        assert status in [ PostStatus.DRAFT, PostStatus.PUBLISHED ]
+
+        post.status = status
+
+        if status == PostStatus.PUBLISHED:
+            if post.posted_at is None:
+                post.posted_at = dt.now()
+            post.modified_at = dt.now()
 
         session = Session()
         session.add(post)
@@ -42,7 +60,7 @@ def admin_post_edit(post_uid):
     else:
         post = Post.query.filter(Post.uid == post_uid).first()
 
-    return render_template('admin/post.html', post=post)
+    return render_template('admin/edit.html', post=post)
 
 @app.route('/admin/post/update', methods=[ 'POST', ])
 def admin_post_update():
@@ -57,7 +75,7 @@ def admin_post_update():
 def admin_preview(post_uid):
     post = Post.query.filter(Post.uid == post_uid).first()
 
-    return render_template('admin/preview.html', post=post)
+    return render_template('post.html', post=post)
 
 if __name__ == '__main__':
     app.debug = DEBUG

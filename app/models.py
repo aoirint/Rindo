@@ -56,6 +56,9 @@ class Post(BaseModel):
 
         self.tags = tags
 
+    def is_draft(self):
+        return self.status in [ PostStatus.UNSAVED_DRAFT, PostStatus.DRAFT ]
+
     def tags_json(self):
         return json.dumps([ tag.name for tag in self.tags ], ensure_ascii=False)
 

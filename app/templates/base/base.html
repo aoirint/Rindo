@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 
+<title>{% block title %}Rindo{% endblock %}</title>
+
 <script
   src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"
   integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
@@ -32,8 +34,7 @@
 <link rel="stylesheet"
   href="/static/css/style.css">
 
-<title>Preview</title>
 
-{% if post %}
-{{ post.body_html() |safe }}
-{% endif %}
+{% block body %}
+
+{% endblock %}

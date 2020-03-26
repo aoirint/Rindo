@@ -1,9 +1,32 @@
 @charset "utf-8";
 
+/* Public */
 html, body {
-  background-color: #FAFAFA;
+  background-color: #FFFFFF;
 }
 
+img {
+  max-width: 100%;
+}
+
+#container {
+  display: flex;
+}
+#contents {
+  flex-grow: 1;
+  width: 100%;
+}
+#sidebar {
+}
+@media(max-width: 960px) {
+  #container { flex-direction: column; }
+}
+@media(min-width: 960px) {
+  #container { flex-direction: row; }
+  #sidebar { width: 300px; }
+}
+
+/* Admin */
 .split55 {
   display: flex;
   width: 100%;
@@ -36,8 +59,4 @@ html, body {
 .hljs-ln-numbers {
   padding-right: .75em !important;
   text-align: right;
-}
-
-img {
-  max-width: 100%;
 }

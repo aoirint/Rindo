@@ -31,7 +31,8 @@
 <p>
   <input id="id_tags" name="tags" form="post_form" value="{% if post.tags %}{{ post.tags_json() }}{% endif %}" placeholder="Tags (ex. A, B, C)">
 
-<input id="id_body" name="body" form="post_form" type="hidden">
+<input id="id_status" name="status" form="post_form" type="hidden" value="{{ post.status }}">
+<input id="id_body" name="body" form="post_form" type="hidden" value="{{ post.body }}">
 
 <div class="split55">
   <div id="editor">{% if post.body %}{{ post.body }}{% endif %}</div>
@@ -39,7 +40,8 @@
 </div>
 
 <p>
-  <button type="submit" form="post_form">Submit</button>
+  <button id="btn_draft" type="submit" form="post_form">{% if post.is_draft() %}Save as draft{% else %}Back to draft{% endif %}</button>
+  <button id="btn_publish" type="submit" form="post_form">Publish</button>
 
 <script>
   var tags = $('#id_tags');
@@ -50,10 +52,19 @@
 </script>
 
 <script>
+  var DRAFT = 1;
+  var PUBLISHED = 2;
+
   var editor = ace.edit("editor");
   editor.setTheme("ace/theme/github");
   editor.session.setMode("ace/mode/markdown");
 
+  $('#btn_draft').on('click', function() {
+    $('#id_status').val(DRAFT);
+  });
+  $('#btn_publish').on('click', function() {
+    $('#id_status').val(PUBLISHED);
+  });
   $('#post_form').on('submit', function() {
     $('#id_body').val(editor.getValue());
   });
