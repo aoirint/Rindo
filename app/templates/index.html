@@ -6,4 +6,11 @@
 
 index
 
+<h3>Recent Entries</h3>
+<ul>
+{% for entry in recent_entries %}
+  <li><a href="{{ url_for('entry', entry_uid=entry.uid) }}">{{ entry.title }}</a>
+{% endfor %}
+</ul>
+
 {% endblock %}

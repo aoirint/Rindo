@@ -2,9 +2,9 @@
 {% if entry %}
 <article class="entry">
 
-<h2 class="entry-title">{{ entry.title }}</h2>
+<h2 class="entry-title">{% if entry.title %}{{ entry.title }}{% endif %}</h2>
 <aside class="entry-meta">
-  <span class="entry-posted-date">{{ entry.posted_at.strftime('%Y-%m-%d') }}</span>
+  <span class="entry-posted-date">{% if entry.posted_at %}{{ entry.posted_at.strftime('%Y-%m-%d') }}{% else %}{{ entry.created_at.strftime('%Y-%m-%d') }}{% endif %}</span>
 </aside>
 
 <section class="entry-body">{{ entry.body_html() |safe }}</section>

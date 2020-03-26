@@ -40,7 +40,7 @@
 </div>
 
 <p>
-  <button id="btn_draft" type="submit" form="entry_form">{% if entry.is_draft() %}Save as draft{% else %}Back to draft{% endif %}</button>
+  <button id="btn_draft" type="submit" form="entry_form">{% if not entry or entry.is_draft() %}Save as draft{% else %}Back to draft{% endif %}</button>
   <button id="btn_publish" type="submit" form="entry_form">Publish</button>
 
 <script>

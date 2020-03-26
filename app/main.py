@@ -13,7 +13,9 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    recent_entries = Entry.query.filter(Entry.status == EntryStatus.PUBLISHED).order_by(Entry.posted_at.desc()).limit(10)
+
+    return render_template('index.html', recent_entries=recent_entries)
 
 @app.route('/entry/<entry_uid>')
 def entry(entry_uid):
@@ -37,8 +39,7 @@ def admin_entry_new():
 def admin_entry_edit(entry_uid):
     if request.method == 'POST':
         entry = Entry.query.filter(Entry.uid == entry_uid).first()
-        if entry is None:
-            entry = Entry.create_new_draft()
+        assert entry is not None
 
         entry.title = request.form['title']
         entry.body = request.form['body']
@@ -59,6 +60,9 @@ def admin_entry_edit(entry_uid):
         session.commit()
     else:
         entry = Entry.query.filter(Entry.uid == entry_uid).first()
+        if entry is None:
+            return redirect(url_for('admin_entry_new'))
+
 
     return render_template('admin/edit.html', entry=entry)
 
