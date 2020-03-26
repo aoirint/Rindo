@@ -1,0 +1,13 @@
+
+{% if entry %}
+<article class="entry">
+
+<h2 class="entry-title">{{ entry.title }}</h2>
+<aside class="entry-meta">
+  <span class="entry-posted-date">{{ entry.posted_at.strftime('%Y-%m-%d') }}</span>
+</aside>
+
+<section class="entry-body">{{ entry.body_html() |safe }}</section>
+
+</article>
+{% endif %}

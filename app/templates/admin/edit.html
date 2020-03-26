@@ -23,32 +23,32 @@
 
 <title>Rindo</title>
 
-<form id="post_form" method="POST" enctype="multipart/form-data"></form>
+<form id="entry_form" method="POST" enctype="multipart/form-data"></form>
 
 <p>
-  <input id="id_title" name="title" form="post_form" value="{% if post.title %}{{ post.title }}{% endif %}" required placeholder="Title">
+  <input id="id_title" name="title" form="entry_form" value="{% if entry.title %}{{ entry.title }}{% endif %}" required placeholder="Title">
 
 <p>
-  <input id="id_tags" name="tags" form="post_form" value="{% if post.tags %}{{ post.tags_json() }}{% endif %}" placeholder="Tags (ex. A, B, C)">
+  <input id="id_tags" name="tags" form="entry_form" value="{% if entry.tags %}{{ entry.tags_json() }}{% endif %}" placeholder="Tags (ex. A, B, C)">
 
-<input id="id_status" name="status" form="post_form" type="hidden" value="{{ post.status }}">
-<input id="id_body" name="body" form="post_form" type="hidden" value="{{ post.body }}">
+<input id="id_status" name="status" form="entry_form" type="hidden" value="{{ entry.status }}">
+<input id="id_body" name="body" form="entry_form" type="hidden" value="{{ entry.body }}">
 
 <div class="split55">
-  <div id="editor">{% if post.body %}{{ post.body }}{% endif %}</div>
+  <div id="editor">{% if entry.body %}{{ entry.body }}{% endif %}</div>
   <iframe id="preview_container"></iframe>
 </div>
 
 <p>
-  <button id="btn_draft" type="submit" form="post_form">{% if post.is_draft() %}Save as draft{% else %}Back to draft{% endif %}</button>
-  <button id="btn_publish" type="submit" form="post_form">Publish</button>
+  <button id="btn_draft" type="submit" form="entry_form">{% if entry.is_draft() %}Save as draft{% else %}Back to draft{% endif %}</button>
+  <button id="btn_publish" type="submit" form="entry_form">Publish</button>
 
 <script>
   var tags = $('#id_tags');
   new Tagify(tags[0]);
 
   var previewContainer = $('#preview_container')[0];
-  previewContainer.src = '/admin/post/preview/{{ post.uid }}';
+  previewContainer.src = '/admin/entry/preview/{{ entry.uid }}';
 </script>
 
 <script>
@@ -65,7 +65,7 @@
   $('#btn_publish').on('click', function() {
     $('#id_status').val(PUBLISHED);
   });
-  $('#post_form').on('submit', function() {
+  $('#entry_form').on('submit', function() {
     $('#id_body').val(editor.getValue());
   });
 

@@ -1,0 +1,9 @@
+{% extends 'base/container.html' %}
+
+{% block title %}{% if entry.title %}{{ entry.title }} - {% endif %}Rindo{% endblock %}
+
+{% block contents %}
+
+{% include 'parts/entry_body.html' %}
+
+{% endblock %}

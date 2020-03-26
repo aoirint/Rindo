@@ -12,33 +12,33 @@ def generate_unique_id(length=14):
     return os.urandom(length).hex()
 
 
-class PostStatus:
+class EntryStatus:
     UNSAVED_DRAFT = 0
     DRAFT = 1
     PUBLISHED = 2
 
-class Post(BaseModel):
-    __tablename__ = 'posts'
+class Entry(BaseModel):
+    __tablename__ = 'entries'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     uid = Column(Text) # unique id
     title = Column(Text)
     body = Column(Text)
-    status = Column(Integer, default=PostStatus.UNSAVED_DRAFT)
+    status = Column(Integer, default=EntryStatus.UNSAVED_DRAFT)
     created_at = Column(DateTime, default=dt.utcnow)
     updated_at = Column(DateTime, default=dt.utcnow)
     posted_at = Column(DateTime)
     modified_at = Column(DateTime)
 
-    tags = relationship('Tag', secondary='posttagrelations', back_populates='posts')
+    tags = relationship('Tag', secondary='entrytagrelations', back_populates='entries')
 
     @staticmethod
     def create_new_draft():
-        post_uid = generate_unique_id()
-        post = Post()
-        post.uid = post_uid
+        entry_uid = generate_unique_id()
+        entry = Entry()
+        entry.uid = entry_uid
 
-        return post
+        return entry
 
     def set_tags(self, tagify_string):
         if len(tagify_string) > 0:
@@ -57,7 +57,7 @@ class Post(BaseModel):
         self.tags = tags
 
     def is_draft(self):
-        return self.status in [ PostStatus.UNSAVED_DRAFT, PostStatus.DRAFT ]
+        return self.status in [ EntryStatus.UNSAVED_DRAFT, EntryStatus.DRAFT ]
 
     def tags_json(self):
         return json.dumps([ tag.name for tag in self.tags ], ensure_ascii=False)
@@ -88,14 +88,14 @@ class Tag(BaseModel):
     created_at = Column(DateTime, default=dt.utcnow)
     updated_at = Column(DateTime, default=dt.utcnow)
 
-    posts = relationship('Post', secondary='posttagrelations', back_populates='tags')
+    entries = relationship('Entry', secondary='entrytagrelations', back_populates='tags')
 
-class PostTagRelation(BaseModel):
-    __tablename__ = 'posttagrelations'
+class EntryTagRelation(BaseModel):
+    __tablename__ = 'entrytagrelations'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
 
-    post_id = Column(Integer, ForeignKey('posts.id'))
+    entry_id = Column(Integer, ForeignKey('entries.id'))
     tag_id = Column(Integer, ForeignKey('tags.id'))
 
     created_at = Column(DateTime, default=dt.utcnow)

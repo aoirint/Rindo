@@ -15,67 +15,68 @@ app = Flask(__name__)
 def index():
     return render_template('index.html')
 
-@app.route('/post/<post_uid>')
-def post(post_uid):
-    post = Post.query.filter(and_(Post.uid == post_uid, Post.status == PostStatus.PUBLISHED)).first()
-    if post is None:
+@app.route('/entry/<entry_uid>')
+def entry(entry_uid):
+    entry = Entry.query.filter(and_(Entry.uid == entry_uid, Entry.status == EntryStatus.PUBLISHED)).first()
+    if entry is None:
         return render_template('404.html'), 404
 
-    return render_template('post.html', post=post)
+    return render_template('entry.html', entry=entry)
 
-@app.route('/admin/post/new')
-def admin_post_new():
-    post = Post.create_new_draft()
+@app.route('/admin/entry/new')
+def admin_entry_new():
+    entry = Entry.create_new_draft()
 
     session = Session()
-    session.add(post)
+    session.add(entry)
     session.commit()
 
-    return redirect(url_for('admin_post_edit', post_uid=post.uid))
+    return redirect(url_for('admin_entry_edit', entry_uid=entry.uid))
 
-@app.route('/admin/post/<post_uid>', methods=[ 'GET', 'POST', ])
-def admin_post_edit(post_uid):
+@app.route('/admin/entry/<entry_uid>', methods=[ 'GET', 'POST', ])
+def admin_entry_edit(entry_uid):
     if request.method == 'POST':
-        post = Post.query.filter(Post.uid == post_uid).first()
-        if post is None:
-            post = Post.create_new_draft()
+        entry = Entry.query.filter(Entry.uid == entry_uid).first()
+        if entry is None:
+            entry = Entry.create_new_draft()
 
-        post.title = request.form['title']
-        post.body = request.form['body']
-        post.set_tags(request.form['tags'])
+        entry.title = request.form['title']
+        entry.body = request.form['body']
+        entry.set_tags(request.form['tags'])
 
         status = int(request.form['status'])
-        assert status in [ PostStatus.DRAFT, PostStatus.PUBLISHED ]
+        assert status in [ EntryStatus.DRAFT, EntryStatus.PUBLISHED ]
 
-        post.status = status
+        entry.status = status
 
-        if status == PostStatus.PUBLISHED:
-            if post.posted_at is None:
-                post.posted_at = dt.now()
-            post.modified_at = dt.now()
+        if status == EntryStatus.PUBLISHED:
+            if entry.posted_at is None:
+                entry.posted_at = dt.now()
+            entry.modified_at = dt.now()
 
         session = Session()
-        session.add(post)
+        session.add(entry)
         session.commit()
     else:
-        post = Post.query.filter(Post.uid == post_uid).first()
+        entry = Entry.query.filter(Entry.uid == entry_uid).first()
 
-    return render_template('admin/edit.html', post=post)
+    return render_template('admin/edit.html', entry=entry)
 
-@app.route('/admin/post/update', methods=[ 'POST', ])
-def admin_post_update():
-    post_uid = request.form.get('post_uid')
-    post = create_or_update_post(post_uid=post_uid)
+@app.route('/admin/entry/update', methods=[ 'POST', ])
+def admin_entry_update():
+    entry_uid = request.form.get('entry_uid')
+    # FIXME:
+    entry = create_or_update_post(entry_uid=entry_uid)
 
     return jsonify({
-        'post_uid': post.uid,
+        'entry_uid': entry.uid,
     })
 
-@app.route('/admin/post/preview/<post_uid>', methods=[ 'GET', ])
-def admin_preview(post_uid):
-    post = Post.query.filter(Post.uid == post_uid).first()
+@app.route('/admin/entry/preview/<entry_uid>', methods=[ 'GET', ])
+def admin_preview(entry_uid):
+    entry = Entry.query.filter(Entry.uid == entry_uid).first()
 
-    return render_template('post.html', post=post)
+    return render_template('entry.html', entry=entry)
 
 if __name__ == '__main__':
     app.debug = DEBUG
