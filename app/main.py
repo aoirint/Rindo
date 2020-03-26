@@ -9,6 +9,7 @@ from settings import *
 from models import *
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = SECRET_KEY
 
 @app.route('/')
 def index():

@@ -8,6 +8,7 @@ def asint(val):
     except: return None
 
 DEBUG = os.environ.get('APP_DEBUG') == '1'
+SECRET_KEY = os.environ['SECRET_KEY']
 
 DATABASE_URL = os.environ.get('APP_DATABASE_URL', 'sqlite:///db.sqlite3')
 
