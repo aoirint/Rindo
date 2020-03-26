@@ -34,4 +34,6 @@
 
 <title>Preview</title>
 
+{% if post %}
 {{ post.body_html() |safe }}
+{% endif %}
