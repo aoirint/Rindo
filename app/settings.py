@@ -14,6 +14,7 @@ DATABASE_URL = os.environ.get('APP_DATABASE_URL', 'sqlite:///db.sqlite3')
 engine = create_engine(
     DATABASE_URL,
     echo=True,
+    pool_recycle=3600, # https://blog.amedama.jp/entry/2015/08/15/133322
 )
 Session = scoped_session(
     sessionmaker(

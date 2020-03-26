@@ -10,7 +10,6 @@ from models import *
 
 app = Flask(__name__)
 
-
 @app.route('/')
 def index():
     recent_entries = Entry.query.filter(Entry.status == EntryStatus.PUBLISHED).order_by(Entry.posted_at.desc()).limit(10)
@@ -80,7 +79,7 @@ def admin_entry_update():
 def admin_preview(entry_uid):
     entry = Entry.query.filter(Entry.uid == entry_uid).first()
 
-    return render_template('entry.html', entry=entry)
+    return render_template('admin/preview.html', entry=entry)
 
 if __name__ == '__main__':
     app.debug = DEBUG

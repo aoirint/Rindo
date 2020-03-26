@@ -4,7 +4,7 @@
 
 {% block contents %}
 
-index
+<h2>Index</h2>
 
 <h3>Recent Entries</h3>
 <ul>
@@ -13,7 +13,7 @@ index
     <a href="{{ url_for('entry', entry_uid=entry.uid) }}">{{ entry.title }}</a>
     <ul class="entry-tags">
       {% for tag in entry.tags %}
-        <li class="tag">{{ tag.name }}
+        <li class="entry-tag">{{ tag.name }}
       {% endfor %}
     </ul>
 {% endfor %}

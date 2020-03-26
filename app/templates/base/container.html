@@ -1,6 +1,10 @@
 {% extends 'base/base.html' %}
 
 {% block body %}
+<header id="top-navigation">
+  <a href="{{ url_for('index') }}">Rindo</a>
+</header>
+
 <div id="container">
 
 <main id="contents">{% block contents %}{% endblock %}</main>
