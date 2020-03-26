@@ -37,3 +37,7 @@ html, body {
   padding-right: .75em !important;
   text-align: right;
 }
+
+img {
+  max-width: 100%;
+}

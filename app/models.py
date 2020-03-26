@@ -41,7 +41,10 @@ class Post(BaseModel):
         return post
 
     def set_tags(self, tagify_string):
-        tagify_tags = json.loads(tagify_string)
+        if len(tagify_string) > 0:
+            tagify_tags = json.loads(tagify_string)
+        else:
+            tagify_tags = []
 
         tags = []
         for tagify_tag in tagify_tags:
