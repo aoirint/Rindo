@@ -4,12 +4,19 @@ from datetime import datetime as dt
 from sqlalchemy import *
 from sqlalchemy.orm import *
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory, jsonify
+from flask_httpauth import HTTPBasicAuth
 
 from settings import *
 from models import *
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = SECRET_KEY
+
+auth = HTTPBasicAuth()
+
+@auth.verify_password
+def verify_auth(username, password):
+    return HTPASSWD.check_password(username, password)
 
 @app.route('/')
 def index():
@@ -26,6 +33,7 @@ def entry(entry_uid):
     return render_template('entry.html', entry=entry)
 
 @app.route('/admin/entry/new')
+@auth.login_required
 def admin_entry_new():
     entry = Entry.create_new_draft()
 
@@ -36,6 +44,7 @@ def admin_entry_new():
     return redirect(url_for('admin_entry_edit', entry_uid=entry.uid))
 
 @app.route('/admin/entry/<entry_uid>', methods=[ 'GET', 'POST', ])
+@auth.login_required
 def admin_entry_edit(entry_uid):
     if request.method == 'POST':
         entry = Entry.query.filter(Entry.uid == entry_uid).first()
@@ -67,6 +76,7 @@ def admin_entry_edit(entry_uid):
     return render_template('admin/edit.html', entry=entry)
 
 @app.route('/admin/entry/update', methods=[ 'POST', ])
+@auth.login_required
 def admin_entry_update():
     entry_uid = request.form.get('entry_uid')
     # FIXME:
@@ -77,6 +87,7 @@ def admin_entry_update():
     })
 
 @app.route('/admin/entry/preview/<entry_uid>', methods=[ 'GET', ])
+@auth.login_required
 def admin_preview(entry_uid):
     entry = Entry.query.filter(Entry.uid == entry_uid).first()
 

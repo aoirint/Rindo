@@ -2,6 +2,7 @@ import os
 from sqlalchemy import *
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.ext.declarative import declarative_base
+from passlib.apache import HtpasswdFile
 
 def asint(val):
     try: return int(val)
@@ -9,6 +10,9 @@ def asint(val):
 
 DEBUG = os.environ.get('APP_DEBUG') == '1'
 SECRET_KEY = os.environ['SECRET_KEY']
+
+HTPASSWD_PATH = '.htpasswd'
+HTPASSWD = HtpasswdFile(HTPASSWD_PATH)
 
 DATABASE_URL = os.environ.get('APP_DATABASE_URL', 'sqlite:///db.sqlite3')
 
