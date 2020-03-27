@@ -6,8 +6,6 @@ services:
     restart: always
     volumes:
       - ./app:/code
-      - ./files:/files
-      - ./static:/static
     ports:
       - 127.0.0.1:8001:5000
     env_file:
